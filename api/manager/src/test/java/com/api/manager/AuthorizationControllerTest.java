@@ -2,7 +2,6 @@ package com.api.manager;
 
 
 import com.api.manager.auth.RegAuth;
-import com.api.manager.auth.UserDetailImpl;
 import com.api.manager.auth.jwt.JwtUtil;
 import com.api.manager.auth.service.JwtUserDetailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,16 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
+import static com.api.manager.common.UtilTestClass.userAuthDefaultValidT;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 
@@ -49,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 *
 * */
 
+
 @SpringBootTest
 @AutoConfigureMockMvc
 public class AuthorizationControllerTest {
@@ -62,13 +58,6 @@ public class AuthorizationControllerTest {
     @Autowired
     private JwtUserDetailService jwtUserDetailService;
 
-    RegAuth userAuthDefaultValidT() {
-        RegAuth regAuthDefaultValid = new RegAuth();
-        regAuthDefaultValid.setPassword("12345678");
-        regAuthDefaultValid.setName("test423");
-        regAuthDefaultValid.setLogin("test3422");
-        return regAuthDefaultValid;
-    }
 
 
     //validate

@@ -3,11 +3,10 @@ package com.api.manager.auth.service;
 import com.api.manager.auth.RegAuth;
 import com.api.manager.auth.UserDetailImpl;
 import com.api.manager.common.BaseService;
-import com.api.manager.common.NotSavedException;
+import com.api.manager.exception_handler_contoller.NotSavedException;
 import com.api.manager.model.UserDb;
 import com.api.manager.repository.UserRepository;
 import org.springframework.dao.DataAccessException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -44,7 +43,7 @@ public class JwtUserDetailService extends BaseService<UserRepository, UserDb, Lo
         try {
             UserDb userDb = getRepository().getUserByLogin(username);
             Objects.requireNonNull(userDb);
-            return new UserDetailImpl(userDb.getLogin(), userDb.getId(), userDb.getPassword(), new ArrayList<>());
+            return new UserDetailImpl(userDb.getLogin(), userDb.getName(), userDb.getId(), userDb.getPassword(), new ArrayList<>());
         } catch (Exception ex) {
             throw new UsernameNotFoundException("Пользователь не найден");
         }

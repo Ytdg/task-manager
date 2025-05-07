@@ -10,9 +10,12 @@ public class UserDetailImpl extends User {
 
     @Getter
     private final Long id;
+    @Getter
+    private final String name;
 
-    public UserDetailImpl(String username, Long ID, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
+    public UserDetailImpl(String login, String name, Long ID, String password, Collection<? extends GrantedAuthority> authorities) {
+        super(login, password, authorities);
         this.id = ID;
+        this.name = name;
     }
 }

@@ -28,7 +28,7 @@ public class JwtUtil {
     }
 
     static {
-        key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        key = Keys.hmacShaKeyFor("717ac506950da0ccb6404cdd5e7591f72018a20cbca27c8a423e9c9e5626ac61".getBytes());
     }
 
     public Date extractExpiration(String token) {
@@ -59,7 +59,7 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 5))
                 .signWith(key)
                 .compact();
     }

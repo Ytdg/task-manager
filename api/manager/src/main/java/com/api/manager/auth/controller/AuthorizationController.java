@@ -20,7 +20,6 @@ import java.util.Objects;
 //http://localhost:8081/api/v1/swagger-ui/index.html#/
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin
 @Tag(name = "AuthorizationController", description = "Контреллер отвечает за авторизацию, аутентификацию и регистрацию пользователя")
 public class AuthorizationController {
 

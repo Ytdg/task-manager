@@ -32,9 +32,9 @@ public class JwtReqFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = request.getHeader("Authorization");
+
         String username = null;
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
+        if (token != null) {
             try {
                 username = jwtUtil.extractUsername(token);
             } catch (IllegalArgumentException ex) {

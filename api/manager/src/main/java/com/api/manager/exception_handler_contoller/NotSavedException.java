@@ -1,4 +1,4 @@
-package com.api.manager.common;
+package com.api.manager.exception_handler_contoller;
 
 import jakarta.annotation.Nullable;
 import org.springframework.dao.DataAccessException;
