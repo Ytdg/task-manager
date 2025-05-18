@@ -1,9 +1,9 @@
 package com.api.manager.repository;
 
 import com.api.manager.common.GrantedRole;
-import com.api.manager.model.ProjectDb;
-import com.api.manager.model.RoleDb;
-import com.api.manager.model.UserDb;
+import com.api.manager.entity.ProjectDb;
+import com.api.manager.entity.RoleDb;
+import com.api.manager.entity.UserDb;
 import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

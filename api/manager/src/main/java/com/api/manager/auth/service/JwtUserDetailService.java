@@ -3,8 +3,8 @@ package com.api.manager.auth.service;
 import com.api.manager.auth.RegAuth;
 import com.api.manager.auth.UserDetailImpl;
 import com.api.manager.common.BaseService;
-import com.api.manager.exception_handler_contoller.NotSavedException;
-import com.api.manager.model.UserDb;
+import com.api.manager.exception_handler_contoller.NotSavedStoreUserException;
+import com.api.manager.entity.UserDb;
 import com.api.manager.repository.UserRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +33,7 @@ public class JwtUserDetailService extends BaseService<UserRepository, UserDb, Lo
         try {
             super.save(userDb);
         } catch (DataAccessException ex) {
-            throw new NotSavedException("Пользователь с таким логином уже есть в системе", ex);
+            throw new NotSavedStoreUserException("Пользователь с таким логином уже есть в системе", ex);
         }
     }
 

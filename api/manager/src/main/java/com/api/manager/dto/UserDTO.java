@@ -1,4 +1,4 @@
-package com.api.manager.model.dto;
+package com.api.manager.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

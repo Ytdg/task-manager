@@ -5,11 +5,8 @@ import org.springframework.dao.DataAccessException;
 
 import java.util.Objects;
 
-
-public  class NotSavedStoreUserException extends  DataAccessException{
-    public NotSavedStoreUserException(String message, @Nullable Throwable throwable) {
+public class NotSavedProject extends DataAccessException {
+    public NotSavedProject(String message, @Nullable Throwable throwable) {
         super(message, Objects.requireNonNull(throwable));
     }
 }
-
-

@@ -4,21 +4,23 @@ import com.api.manager.auth.UserDetailImpl;
 import com.api.manager.common.GrantedRole;
 import com.api.manager.common.Mapping;
 import com.api.manager.exception_handler_contoller.NotGetObjException;
-import com.api.manager.exception_handler_contoller.NotSavedException;
-import com.api.manager.model.MetaDB;
-import com.api.manager.model.ProjectDb;
-import com.api.manager.model.RoleDb;
-import com.api.manager.model.UserDb;
-import com.api.manager.model.dto.ProjectDTO;
+import com.api.manager.exception_handler_contoller.NotSavedProject;
+import com.api.manager.exception_handler_contoller.NotSavedStoreUserException;
+import com.api.manager.entity.ProjectDb;
+import com.api.manager.entity.RoleDb;
+import com.api.manager.entity.UserDb;
+import com.api.manager.dto.ProjectDTO;
 import com.api.manager.repository.MetaRepository;
 import com.api.manager.repository.ProjectRepository;
 import com.api.manager.repository.RoleRepository;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.InternalException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
@@ -48,9 +50,9 @@ public class ProjectService {
                         return projectDto;
                     }
             ).toList();
-        } catch (Exception ex){
+        } catch (Exception ex) {
             log.info(ex.getMessage());
-            throw new NotGetObjException("Не удалось получить проекты:", ex);
+            throw new InternalException(ex.getMessage());
         }
     }
 
@@ -64,7 +66,7 @@ public class ProjectService {
             roleRepository.save(roleDb);
             return Mapping.toProjectDto(projectDb);
         } catch (Exception ex) {
-            throw new NotSavedException("Не удалось сохранить проект:", ex);
+            throw new InternalException(ex.getMessage());
         }
     }
 
@@ -76,7 +78,10 @@ public class ProjectService {
             projectDb = projectRepository.save(projectDb);
             return Mapping.toProjectDto(projectDb);
         } catch (Exception ex) {
-            throw new NotSavedException("Не удалось сохранить проект:", ex);
+            if (ex instanceof NoSuchElementException) {
+                throw new NotSavedProject(ex.getMessage(), ex);
+            }
+            throw new InternalException(ex.getMessage());
         }
     }
 

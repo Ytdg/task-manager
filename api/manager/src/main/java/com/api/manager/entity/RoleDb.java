@@ -1,4 +1,4 @@
-package com.api.manager.model;
+package com.api.manager.entity;
 
 import com.api.manager.common.GrantedRole;
 import com.api.manager.common.GrantedRoleConverter;

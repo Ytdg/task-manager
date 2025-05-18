@@ -1,4 +1,4 @@
-package com.api.manager.model;
+package com.api.manager.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 /* relate to storage*/
 @ControllerAdvice
 public class ExceptionStoreHandler {
-    @ExceptionHandler(NotSavedException.class)
-    public ErrorResponse handleResourceNotSaveStoreException(NotSavedException ex) {
+    @ExceptionHandler(NotSavedStoreUserException.class)
+    public ErrorResponse handleResourceNotSaveStoreUserException(NotSavedStoreUserException ex) {
         return ErrorResponse.create(ex, HttpStatus.CONFLICT, ex.getLocalizedMessage());
     }
-    @ExceptionHandler(NotGetObjException.class)
-    public ErrorResponse handleResourceNotGetObjStoreException(NotGetObjException ex) {
-        return ErrorResponse.create(ex, HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage());
+    @ExceptionHandler(NotSavedProject.class)
+    public ErrorResponse handleResourceNotSaveProjectStoreException(NotSavedProject ex) {
+        return ErrorResponse.create(ex, HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
     }
 }

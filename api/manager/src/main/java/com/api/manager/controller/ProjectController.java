@@ -1,15 +1,12 @@
 package com.api.manager.controller;
 
-import com.api.manager.auth.UserDetailImpl;
 import com.api.manager.common.SecurityUtils;
-import com.api.manager.model.dto.ProjectDTO;
-import com.api.manager.model.dto.UserDTO;
+import com.api.manager.dto.ProjectDTO;
 import com.api.manager.service.ProjectService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.NonNull;
-import org.apache.catalina.security.SecurityUtil;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +22,7 @@ import java.util.List;
 //}
 @RestController
 @RequestMapping("/project")
+@Tag(name = "ProjectController", description = "Контреллер отвечает за работу с проектами конкретного пользователя пользователя. Требуется аутентификациия")
 public class ProjectController {
     private final ProjectService projectService;
 
@@ -34,12 +32,16 @@ public class ProjectController {
 
     @GetMapping("/get_all")
     @ResponseBody
+    @Tag(name = "/get_all", description = "Доступен всем пользователям. Получение списка проектов, в которых пользователь записан." + "\n" +
+            "возвращает: HttpStatus.INTERNAL_SERVER_ERROR -если проблема с сервером")
     List<ProjectDTO> getAll() {
         return projectService.getAll(SecurityUtils.getCurrentUserDetail());
     }
 
     @PostMapping("/create")
     @ResponseBody
+    @Tag(name = "/create", description = "Доступен всем пользователям. Создать проект. Обязательно имя проекта.\n" +
+            "возвращает: HttpStatus.INTERNAL_SERVER_ERROR -если проблема с сервером,HttpStatus.BAD_REQUEST - при некорректных данных")
     ProjectDTO create(@RequestBody @Valid ProjectDTO projectDTO) {
         return projectService.create(projectDTO, SecurityUtils.getCurrentUserDetail());
     }
@@ -47,6 +49,9 @@ public class ProjectController {
     @PostMapping("/{project_id}/update")
     @ResponseBody
     @PreAuthorize("@inspectGrantedRole.hasSuperUser(#projectId)")
+    @Tag(name = "/update", description = "Доступен пользователю с ролью Product Owner (SuperUser). Изменить проект.\n" +
+            "Обязательно id проекта и имя, возвращает: HttpStatus.INTERNAL_SERVER_ERROR -если проблема с сервером,HttpStatus.BAD_REQUEST - при некорректных данных\n" +
+            "HttpStatus.FORBIDDEN - если доступ с этой ролью запрещен")
     ProjectDTO save(@PathVariable("project_id") Long projectId, @RequestBody @Valid ProjectDTO projectDTO) {
         return projectService.save(projectDTO, projectId);
     }

@@ -1,10 +1,10 @@
 package com.api.manager.common;
 
 import com.api.manager.auth.UserDetailImpl;
-import com.api.manager.model.ProjectDb;
-import com.api.manager.model.UserDb;
-import com.api.manager.model.dto.ProjectDTO;
-import com.api.manager.model.dto.UserDTO;
+import com.api.manager.entity.ProjectDb;
+import com.api.manager.entity.UserDb;
+import com.api.manager.dto.ProjectDTO;
+import com.api.manager.dto.UserDTO;
 import jakarta.validation.constraints.NotNull;
 
 public class Mapping {

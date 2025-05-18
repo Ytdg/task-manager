@@ -1,6 +1,6 @@
-package com.api.manager.model.dto;
+package com.api.manager.dto;
 
-import com.api.manager.model.MetaDB;
+import com.api.manager.entity.MetaDB;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

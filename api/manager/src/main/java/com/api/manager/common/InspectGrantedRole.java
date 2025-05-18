@@ -2,14 +2,11 @@ package com.api.manager.common;
 
 
 import com.api.manager.auth.UserDetailImpl;
-import com.api.manager.model.ProjectDb;
-import com.api.manager.model.RoleDb;
-import com.api.manager.model.UserDb;
+import com.api.manager.entity.ProjectDb;
+import com.api.manager.entity.UserDb;
 import com.api.manager.repository.RoleRepository;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component("inspectGrantedRole")
@@ -33,7 +30,6 @@ public class InspectGrantedRole {
     }
 
     public boolean hasSuperUser(@NonNull Long projectId) {
-
         return check(projectId, GrantedRole.SUPER_USER);
     }
 

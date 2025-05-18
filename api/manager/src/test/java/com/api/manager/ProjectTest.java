@@ -1,27 +1,20 @@
 package com.api.manager;
 
 import com.api.manager.auth.service.JwtUserDetailService;
-import com.api.manager.model.ProjectDb;
-import com.api.manager.model.dto.ProjectDTO;
+import com.api.manager.entity.ProjectDb;
+import com.api.manager.dto.ProjectDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 
@@ -50,19 +43,22 @@ public class ProjectTest {
     private ObjectMapper objectMapper;
 
     private final String basePath = "/project/";
-//+
+
+    //+
     @Test
     @WithUserDetails("test3422")
     void getAll() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(basePath + "get_all")).andExpect(status().isOk());
     }
-//+
+
+    //+
     @Test
     @WithUserDetails("notAuthorization")
     void getAllIncorrectUserRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(basePath + "get_all")).andExpect(status().isForbidden()).andDo(print());
     }
-//+
+
+    //+
     @Test
     @WithUserDetails("test3422")
     void getAllChekResult() throws Exception {
@@ -75,7 +71,8 @@ public class ProjectTest {
             assertEquals(41L, db.getCreator().getId(), "Incorrect ProjectDB");
         }
     }
-//+
+
+    //+
     //Test create
     @Test
     @WithUserDetails("hophay")
@@ -85,7 +82,8 @@ public class ProjectTest {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(basePath + "create").contentType(MediaType.APPLICATION_JSON).
                 content(jsObj)).andExpect(status().isBadRequest()).andReturn();
     }
-//+
+
+    //+
     @Test
     @WithUserDetails("hophay")
     void createProjectIncorrectParamName() throws Exception {
@@ -95,7 +93,8 @@ public class ProjectTest {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(basePath + "create").contentType(MediaType.APPLICATION_JSON).
                 content(jsObj)).andExpect(status().isBadRequest()).andReturn();
     }
-//+
+
+    //+
     @Test
     @WithUserDetails("hophay")
     void createProjectIncorrectParamCreator() throws Exception {
@@ -105,7 +104,8 @@ public class ProjectTest {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(basePath + "create").contentType(MediaType.APPLICATION_JSON).
                 content(jsObj)).andExpect(status().isBadRequest()).andReturn();
     }
-//+
+
+    //+
     @Test
     @WithUserDetails("hophay")
     void createProjectGenerate() throws Exception {
@@ -117,7 +117,8 @@ public class ProjectTest {
                     content(jsObj)).andExpect(status().isOk());
         }
     }
-//+
+
+    //+
     //Test save id=14
     @Test
     @WithUserDetails("test3422")
@@ -127,7 +128,8 @@ public class ProjectTest {
         mockMvc.perform(MockMvcRequestBuilders.post(basePath + "14/update").contentType(MediaType.APPLICATION_JSON).
                 content(jsObj)).andExpect(status().isBadRequest()).andDo(print());
     }
-//+
+
+    //+
     @Test
     @WithUserDetails("test3422")
     void inCorrectIdSaveProject() throws Exception {
@@ -135,9 +137,10 @@ public class ProjectTest {
         projectDTO.setName("InvalidTest3422");
         String jsObj = objectMapper.writeValueAsString(projectDTO);
         mockMvc.perform(MockMvcRequestBuilders.post(basePath + "10000000000000/update").contentType(MediaType.APPLICATION_JSON).
-                content(jsObj)).andExpect(status().isConflict()).andDo(print());
+                content(jsObj)).andExpect(status().isForbidden()).andDo(print());
     }
-//-
+
+    //-
     @Test
     @WithUserDetails("hophay")
     void notAuthUserOnProjectSave() throws Exception {
@@ -148,5 +151,53 @@ public class ProjectTest {
                 content(jsObj)).andExpect(status().isForbidden()).andDo(print());
     }
 
+    @Test
+    @WithUserDetails("hophay")
+    @SneakyThrows
+    void invalidJsonDataCreateSend() {
+        String json = "{\n" +
+                "  \"id\": 0,\n" +
+                "  \"name\": \"string\",\n" +
+                "  \"creator\": null,\n" +
+                "  \"metaDB\": null\n" +
+                "}";
+        mockMvc.perform(MockMvcRequestBuilders.post(basePath + "create").contentType(MediaType.APPLICATION_JSON).
+                content(json)).andExpect(status().isOk()).andDo(print());
+
+        String json2 = "{\n" +
+                "  \"id\": 0,\n" +
+                "  \"names2\": \"string\",\n" +
+                "  \"creator\": null,\n" +
+                "  \"metaDB\": null\n" +
+                "}";
+        mockMvc.perform(MockMvcRequestBuilders.post(basePath + "create").contentType(MediaType.APPLICATION_JSON).
+                content(json2)).andExpect(status().isBadRequest()).andDo(print());
+    }
+
+    @Test
+    @WithUserDetails("hophay")
+    @SneakyThrows
+    void notFoundProjectWithId() {
+        //error: if not found project -> forribben
+        ProjectDTO projectDTO =new ProjectDTO();
+        projectDTO.setName("test");
+        projectDTO.setId(-1L);
+        String js=objectMapper.writeValueAsString(projectDTO);
+        mockMvc.perform(MockMvcRequestBuilders.post(basePath + projectDTO.getId()+"/update").contentType(MediaType.APPLICATION_JSON).
+                content(js)).andExpect(status().isForbidden()).andDo(print());
+    }
+//id 13 project
+    @Test
+    @WithUserDetails("test3422")
+    @SneakyThrows
+    void notIdProjectUpdate() {
+        ProjectDTO projectDTO =new ProjectDTO();
+        projectDTO.setName("test");
+        String js=objectMapper.writeValueAsString(projectDTO);
+        mockMvc.perform(MockMvcRequestBuilders.post(basePath + "-"+"/update").contentType(MediaType.APPLICATION_JSON).
+                content(js)).andExpect(status().isBadRequest()).andDo(print());
+    }
+
 
 }
+
