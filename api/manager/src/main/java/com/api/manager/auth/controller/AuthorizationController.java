@@ -6,6 +6,7 @@ import com.api.manager.auth.jwt.JwtUtil;
 import com.api.manager.auth.service.JwtUserDetailService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.hibernate5.SpringSessionContext;
@@ -44,7 +45,7 @@ public class AuthorizationController {
 
     @PostMapping("/authenticate")
     @Tag(name = "authenticate", description = "Отправка учетных данных в body в результате высылаеться сам токен в header с заголовком" +
-            " 'Authorization'. " + "Правила валидации указаны")
+            " 'Authorization'. " + "Правила валидации указаны"+"\n Токен получить из заголовка Authorization"+"\nКаждый запрос должен иметь в заголовке Authorization этот же токен.")
     public ResponseEntity<?> generateToken(@Valid @RequestBody JwtAuthReq jwtAuthReq) {
         authenticate(jwtAuthReq);
 
@@ -53,8 +54,9 @@ public class AuthorizationController {
 
         return ResponseEntity.ok()
                 .header("Authorization", token)
-                .contentType(MediaType.TEXT_PLAIN)
-                .body("The token is generated");
+                .contentType(MediaType.APPLICATION_JSON)
+                .cacheControl(CacheControl.noStore().mustRevalidate())
+                .body("\"The token is generated\""); // Правильно: тело - JSON строка
     }
 
     private void authenticate(JwtAuthReq regAuth) {

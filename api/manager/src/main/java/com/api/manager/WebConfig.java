@@ -6,6 +6,7 @@ import com.api.manager.auth.service.JwtUserDetailService;
 import lombok.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -75,14 +76,26 @@ public class WebConfig {
     }
 
     @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
     public CorsFilter corsFilter() {
+
+
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("*"); // Замените
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");// Разрешенные заголовки
+        configuration.setExposedHeaders(List.of("Authorization")); // Добавьте
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Применить ко всем эндпоинтам
+        return new CorsFilter(source);
+
+       /* UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+        return new CorsFilter(source);*/
     }
 
 
