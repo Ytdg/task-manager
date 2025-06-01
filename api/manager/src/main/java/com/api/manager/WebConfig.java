@@ -83,7 +83,7 @@ public class WebConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("*"); // Замените
         configuration.addAllowedMethod("*");
-        
+
         configuration.addAllowedHeader("*");// Разрешенные заголовки
         configuration.setExposedHeaders(List.of("Authorization")); // Добавьте
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

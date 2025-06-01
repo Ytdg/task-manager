@@ -6,7 +6,7 @@ import org.springframework.dao.DataAccessException;
 import java.util.Objects;
 
 public class NotGetObjException extends DataAccessException {
-    public NotGetObjException(String message, @Nullable Throwable throwable) {
+    public NotGetObjException(String message,Throwable throwable) {
         super(message, Objects.requireNonNull(throwable));
     }
 }

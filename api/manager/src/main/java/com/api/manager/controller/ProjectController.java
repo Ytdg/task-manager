@@ -6,6 +6,7 @@ import com.api.manager.service.ProjectService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,4 +56,22 @@ public class ProjectController {
     ProjectDTO save(@PathVariable("project_id") Long projectId, @RequestBody @Valid ProjectDTO projectDTO) {
         return projectService.save(projectDTO, projectId);
     }
+
+    @GetMapping("/{project_id}/get")
+    @ResponseBody
+    @PreAuthorize("@inspectGrantedRole.hasUserOnProject(#projectId)")
+    @Tag(name = "/update", description = "Доступен пользователю с любой ролью.Получить проект.\n" +
+            "возвращает: HttpStatus.INTERNAL_SERVER_ERROR -если проблема с сервером,\n" +
+            "HttpStatus.FORBIDDEN - если пользователь не имеет доступ к данному проекту/проект отсутствует")
+    ProjectDTO getProject(@PathVariable("project_id") Long projectId) {
+        return projectService.get(projectId);
+    }
+
+    @DeleteMapping("/{project_id}/delete")
+    @PreAuthorize("@inspectGrantedRole.hasSuperUser(#projectId)")
+    void deleteProject(@PathVariable("project_id") Long projectId) {
+        projectService.delete(projectId);
+    }
+
+
 }

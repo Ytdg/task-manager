@@ -12,7 +12,8 @@ import java.util.List;
 
 @Repository
 public interface RoleRepository extends JpaRepository<RoleDb, Long> {
-    List<RoleDb> getAllByUserDb(UserDb userDb);
+    List<RoleDb> getAllByUserDb(@NonNull UserDb userDb);
 
     Boolean existsByGrantedAndUserDbAndProjectDb(@NonNull GrantedRole granted, @NonNull UserDb userDb, @NonNull ProjectDb projectDb);
+    Boolean existsByUserDbAndProjectDb(@NonNull UserDb userDb,@NonNull ProjectDb projectDb);
 }

@@ -56,7 +56,7 @@ public class AuthorizationController {
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .cacheControl(CacheControl.noStore().mustRevalidate())
-                .body("\"The token is generated\""); // Правильно: тело - JSON строка
+                .body("\"The token is generated\"");
     }
 
     private void authenticate(JwtAuthReq regAuth) {

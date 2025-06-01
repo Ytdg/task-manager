@@ -7,7 +7,7 @@ import java.util.Objects;
 
 
 public  class NotSavedStoreUserException extends  DataAccessException{
-    public NotSavedStoreUserException(String message, @Nullable Throwable throwable) {
+    public NotSavedStoreUserException(String message, Throwable throwable) {
         super(message, Objects.requireNonNull(throwable));
     }
 }

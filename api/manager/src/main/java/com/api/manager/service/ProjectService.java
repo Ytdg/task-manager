@@ -3,6 +3,7 @@ package com.api.manager.service;
 import com.api.manager.auth.UserDetailImpl;
 import com.api.manager.common.GrantedRole;
 import com.api.manager.common.Mapping;
+import com.api.manager.entity.MetaDB;
 import com.api.manager.exception_handler_contoller.NotGetObjException;
 import com.api.manager.exception_handler_contoller.NotSavedProject;
 import com.api.manager.exception_handler_contoller.NotSavedStoreUserException;
@@ -18,13 +19,16 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.InternalException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
+
 @Service
 @Slf4j
 public class ProjectService {
+    //refactoring SingleResponseAbility
     private final RoleRepository roleRepository;
     private final ProjectRepository projectRepository;
 
@@ -36,26 +40,39 @@ public class ProjectService {
         this.metaRepository = repository;
     }
 
-    //ReWrite
+
     public List<ProjectDTO> getAll(@NonNull UserDetailImpl userDetail) {
         try {
-            return roleRepository.getAllByUserDb(new UserDb(userDetail.getId())).stream().map(r ->
-                    {
+            return roleRepository.getAllByUserDb(new UserDb(userDetail.getId())).stream()
+                    .map(r -> {
                         ProjectDTO projectDto = Mapping.toProjectDto(r.getProjectDb());
-                        try {
-                            projectDto.setMetaDB(metaRepository.findById(r.getId()).orElseThrow());
-                        } catch (Exception ex) {
-                            log.error(ex.getMessage());
-                        }
+                        metaRepository.findById(r.getId())
+                                .ifPresentOrElse(projectDto::setMetaDB,
+                                        () -> log.info("MetaDB not found for role id: {}", r.getId()));
                         return projectDto;
-                    }
-            ).toList();
+                    })
+                    .toList();
         } catch (Exception ex) {
-            log.info(ex.getMessage());
-            throw new InternalException(ex.getMessage());
+            log.error("Error while fetching project roles: {}", ex.getMessage());
+
+            throw new InternalException("Failed to fetch project roles", ex);
         }
     }
 
+    public ProjectDTO get(long idProject) {
+        try {
+            ProjectDTO projectDTO = Mapping.toProjectDto(projectRepository.findById(idProject).orElseThrow());
+            metaRepository.findById(idProject).ifPresentOrElse(projectDTO::setMetaDB, () -> log.info("Not meta project"));
+            return projectDTO;
+        } catch (Exception e) {
+            if (e instanceof NoSuchElementException) {
+                throw new NoSuchElementException("Not Found Project");
+            }
+            throw new InternalException("Failed get Project", e);
+        }
+    }
+
+    //refactoring method
     @Transactional
     public ProjectDTO create(ProjectDTO projectDTO, @NonNull UserDetailImpl userDetail) {
         try {
@@ -66,12 +83,26 @@ public class ProjectService {
             roleRepository.save(roleDb);
             return Mapping.toProjectDto(projectDb);
         } catch (Exception ex) {
-            throw new InternalException(ex.getMessage());
+            throw new InternalException("Failed create project", ex);
         }
     }
 
     @Transactional
-    public ProjectDTO save(ProjectDTO projectDTO, Long idProject) {
+    public void delete(long idProject) {
+        try {
+            if (projectRepository.existsById(idProject)) {
+                projectRepository.deleteById(idProject);
+                return;
+            }
+            throw new NoSuchElementException("Project not Found");
+        } catch (Exception e) {
+            throw new InternalException("Couldn't delete project", e);
+        }
+    }
+
+    //refactoring method
+    @Transactional
+    public ProjectDTO save(ProjectDTO projectDTO, long idProject) {
         try {
             ProjectDb projectDb = projectRepository.findById(idProject).orElseThrow();
             projectDb.setName(projectDTO.getName());
@@ -81,7 +112,7 @@ public class ProjectService {
             if (ex instanceof NoSuchElementException) {
                 throw new NotSavedProject(ex.getMessage(), ex);
             }
-            throw new InternalException(ex.getMessage());
+            throw new InternalException("Failed save project", ex);
         }
     }
 

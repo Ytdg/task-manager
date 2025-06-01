@@ -6,6 +6,7 @@ import com.api.manager.dto.ProjectDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -197,6 +198,43 @@ public class ProjectTest {
         mockMvc.perform(MockMvcRequestBuilders.post(basePath + "-"+"/update").contentType(MediaType.APPLICATION_JSON).
                 content(js)).andExpect(status().isBadRequest()).andDo(print());
     }
+    @Test
+    @WithUserDetails("test3422")
+    @SneakyThrows
+    void getProject() {
+
+        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "16"+"/get")).andExpect(status().isOk()).andDo(print());
+
+    }
+
+    @Test
+    @WithUserDetails("test3422")
+    @SneakyThrows
+    void getProjectWithNotIdAndNoAccess() {
+
+        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "-1"+"/get")).andExpect(status().isForbidden()).andDo(print());
+        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "20"+"/get")).andExpect(status().isForbidden()).andDo(print());
+
+    }
+    @Test
+    @WithUserDetails("hophay")
+    @SneakyThrows
+    void projectDeleteNotAccess() {
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(basePath + "16"+"/delete")).andExpect(status().isForbidden()).andDo(print());
+
+    }
+
+    @Test
+    @WithUserDetails("hophay")
+    @SneakyThrows
+    void projectDelete() {
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(basePath + "18"+"/delete")).andExpect(status().isOk()).andDo(print());
+
+    }
+
+
 
 
 }
