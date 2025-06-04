@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-/*
 @Service
 public class TaskBoardService {
     private final TaskBoardRepository taskBoardRepository;
@@ -34,9 +33,9 @@ public class TaskBoardService {
         return Mapping.toTaskDTO(taskBoardRepository.save(taskDb));
     }
 
-    public List<TaskDTO> getAll(@NonNull Long idSpring, @NonNull UserDetailImpl userDetail, @NonNull Long idProject) {
+  /*  public List<TaskDTO> getAll(@NonNull Long idSpring, @NonNull UserDetailImpl userDetail, @NonNull Long idProject) {
 
-    }
+    }*/
 }
 
- */
+

@@ -10,8 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-/*@RestController
+@RestController
 @RequestMapping("/task_board/{project_id}")
 @Tag(name = "TaskBoardController", description = "Контреллер отвечает за обработку ЗАДАЧ. Требуется аутентификациия")
 public class TaskBoardController {
@@ -19,9 +18,11 @@ public class TaskBoardController {
 
     TaskBoardController(TaskBoardService taskBoardService) {
         this.taskBoardService = taskBoardService;
-    }
 
-    @PostMapping("/create")
+    }
+}
+
+   /* @PostMapping("/create")
     @ResponseBody
     @PreAuthorize("@inspectGrantedRole.isAccessSprintOnProjectAndSuperOrSubUser(#projectId,#idSprint)")
     @Tag(name = "/create", description = "Доступен пользователям с ролями SUPER_USER,SUB_SUPER_USER. Создать задачу!.\n" +
@@ -30,7 +31,7 @@ public class TaskBoardController {
                    @RequestParam(value = "id_sprint") Long idSprint) {
         return taskBoardService.create(taskDTO, idSprint);
     }
-    @PostMapping("/get_all")
+  /*  @PostMapping("/get_all")
     @ResponseBody
     @PreAuthorize("@inspectGrantedRole.isAccessSprintOnProjectAndSuperOrSubUser(#projectId,#idSprint)")
     @Tag(name = "/create", description = "Доступен пользователям с ролями SUPER_USER,SUB_SUPER_USER. Создать задачу!.\n" +
@@ -38,7 +39,7 @@ public class TaskBoardController {
     TaskDTO create(@PathVariable("project_id") Long projectId, @RequestBody @Valid TaskDTO taskDTO,
                    @RequestParam(value = "id_sprint") Long idSprint) {
         return taskBoardService.create(taskDTO, idSprint);
-    }
+    }*/
 
    /* @GetMapping("/get_all")
     @ResponseBody
@@ -62,6 +63,4 @@ public class TaskBoardController {
 
 
 }
-
- */
-
+*/
