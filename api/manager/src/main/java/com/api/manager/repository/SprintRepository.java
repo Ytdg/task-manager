@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface SprintRepository extends JpaRepository<SprintDb, Long> {
     List<SprintDb> findSprintDbByIdProject(@NonNull Long idProject);
+
+    boolean existsByIdAndIdProject(@NonNull Long id, @NonNull Long idProject);
 }

@@ -92,6 +92,19 @@ public class SprintBoardTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/sprint_board/1/" + "get_all")).andExpect(status().isForbidden()).andDo(print());
 
     }
+    @Test
+    @SneakyThrows
+    @WithUserDetails("test3422")
+    void delete() {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/sprint_board/217/delete?id=312" )).andExpect(status().isOk()).andDo(print());
+    }
+    @Test
+    @SneakyThrows
+    @WithUserDetails("test3422")
+    void deleteNotFound() {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/sprint_board/217/delete?id=10000" )).andExpect(status().isNotFound()).andDo(print());
+    }
+
 
 
 }

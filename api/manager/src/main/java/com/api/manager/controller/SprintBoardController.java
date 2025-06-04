@@ -43,5 +43,14 @@ public class SprintBoardController {
         return sprintBoardService.getAll(projectId);
     }
 
+    @DeleteMapping("/delete")
+    @PreAuthorize("@inspectGrantedRole.hasSuperUserOrSubSuperUser(#projectId)")
+    @Tag(name = "/delete", description = "Доступен пользователям с ролями SUPER_USER,SUB_SUPER_USER.Удалить спринт.\n" +
+            "возвращает: HttpStatus.FORBIDDEN -если нет доступа, HttpStatus.NOT_FOUND если спринг не найден")
+    void delete(@PathVariable("project_id") Long projectId, @RequestParam(value = "id") Long idSprint) {
+        sprintBoardService.delete(idSprint);
+    }
+
+
 }
 

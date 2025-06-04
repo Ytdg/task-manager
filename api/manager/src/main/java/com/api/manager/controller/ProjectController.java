@@ -60,7 +60,7 @@ public class ProjectController {
 
     @GetMapping("/{project_id}/get")
     @ResponseBody
-    @PreAuthorize("@inspectGrantedRole.hasUserOnProject(#projectId)")
+    @PreAuthorize("@inspectGrantedRole.hasSuperUserOrSubSuperUserOrUser(#projectId)")
     @Tag(name = "/get", description = "Доступен пользователю с любой ролью.Получить проект.\n" +
             "возвращает: HttpStatus.INTERNAL_SERVER_ERROR -если проблема с сервером,\n" +
             "HttpStatus.FORBIDDEN - если пользователь не имеет доступ к данному проекту/проект отсутствует")

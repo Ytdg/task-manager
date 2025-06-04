@@ -5,6 +5,7 @@ import com.api.manager.auth.UserDetailImpl;
 import com.api.manager.entity.ProjectDb;
 import com.api.manager.entity.UserDb;
 import com.api.manager.repository.RoleRepository;
+import com.api.manager.repository.SprintRepository;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cglib.core.internal.Function;
@@ -16,9 +17,12 @@ import java.util.function.Consumer;
 @Slf4j
 public class InspectAccessUserProject {
     private final RoleRepository roleRepository;
+    private final SprintRepository sprintRepository;
 
-    InspectAccessUserProject(RoleRepository roleRepository) {
+    InspectAccessUserProject(RoleRepository roleRepository, SprintRepository sprintRepository
+    ) {
         this.roleRepository = roleRepository;
+        this.sprintRepository = sprintRepository;
     }
 
     private boolean check(Long projectId, GrantedRole grantedRole) {
@@ -53,7 +57,14 @@ public class InspectAccessUserProject {
     }
 
     public boolean hasUserOnProject(@NonNull Long projectId) {
-        return  check(projectId,GrantedRole.USER);
+        return check(projectId, GrantedRole.USER);
+    }
+
+    public boolean isAccessSprintOnProjectAndSuperOrSubUser(@NonNull Long idProject, @NonNull Long sprintId) {
+        return sprintRepository.existsByIdAndIdProject(sprintId, idProject) && hasSuperUserOrSubSuperUser(idProject);
+    }
+    public boolean isAccessSprintOnProjectAndSuperOrSubUserOrUser(@NonNull Long idProject, @NonNull Long sprintId) {
+        return sprintRepository.existsByIdAndIdProject(sprintId, idProject) && hasSuperUserOrSubSuperUser(idProject);
     }
 
 
