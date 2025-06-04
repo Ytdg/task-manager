@@ -30,6 +30,7 @@ public class JwtUserDetailService extends BaseService<UserRepository, UserDb, Lo
         userDb.setName(regAuth.getName());
         userDb.setLogin(regAuth.getLogin());
         userDb.setPassword(passwordEncoder.encode(regAuth.getPassword()));
+
         try {
             super.save(userDb);
         } catch (DataAccessException ex) {

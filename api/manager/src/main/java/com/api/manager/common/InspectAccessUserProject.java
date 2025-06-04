@@ -44,6 +44,9 @@ public class InspectAccessUserProject {
         return check(projectId, GrantedRole.SUPER_USER);
     }
 
+    public boolean hasSuperUserOrSubSuperUser(@NonNull Long projectId) {
+        return check(projectId, GrantedRole.SUPER_USER) || check(projectId, GrantedRole.SUB_SUPER_USER);
+    }
 
     public boolean hasSubSuperUser(@NonNull Long projectId) {
         return check(projectId, GrantedRole.SUB_SUPER_USER);
@@ -52,5 +55,6 @@ public class InspectAccessUserProject {
     public boolean hasUserOnProject(@NonNull Long projectId) {
         return executeRequest(userDetail -> roleRepository.existsByUserDbAndProjectDb(new UserDb(userDetail.getId()), new ProjectDb(projectId)));
     }
+
 
 }

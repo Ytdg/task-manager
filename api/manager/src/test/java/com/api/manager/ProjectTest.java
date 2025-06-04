@@ -1,6 +1,9 @@
 package com.api.manager;
 
 import com.api.manager.auth.service.JwtUserDetailService;
+import com.api.manager.common.CryptMeta;
+import com.api.manager.common.GrantedRole;
+import com.api.manager.common.SharedURLField;
 import com.api.manager.entity.ProjectDb;
 import com.api.manager.dto.ProjectDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -17,7 +20,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.List;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -108,11 +113,11 @@ public class ProjectTest {
 
     //+
     @Test
-    @WithUserDetails("hophay")
+    @WithUserDetails("test3422")
     void createProjectGenerate() throws Exception {
         ProjectDTO projectDTO = new ProjectDTO();
         projectDTO.setName("TestProject");
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 10; i++) {
             String jsObj = objectMapper.writeValueAsString(projectDTO);
             mockMvc.perform(MockMvcRequestBuilders.post(basePath + "create").contentType(MediaType.APPLICATION_JSON).
                     content(jsObj)).andExpect(status().isOk());
@@ -180,30 +185,32 @@ public class ProjectTest {
     @SneakyThrows
     void notFoundProjectWithId() {
         //error: if not found project -> forribben
-        ProjectDTO projectDTO =new ProjectDTO();
+        ProjectDTO projectDTO = new ProjectDTO();
         projectDTO.setName("test");
         projectDTO.setId(-1L);
-        String js=objectMapper.writeValueAsString(projectDTO);
-        mockMvc.perform(MockMvcRequestBuilders.post(basePath + projectDTO.getId()+"/update").contentType(MediaType.APPLICATION_JSON).
+        String js = objectMapper.writeValueAsString(projectDTO);
+        mockMvc.perform(MockMvcRequestBuilders.post(basePath + projectDTO.getId() + "/update").contentType(MediaType.APPLICATION_JSON).
                 content(js)).andExpect(status().isForbidden()).andDo(print());
     }
-//id 13 project
+
+    //id 13 project
     @Test
     @WithUserDetails("test3422")
     @SneakyThrows
     void notIdProjectUpdate() {
-        ProjectDTO projectDTO =new ProjectDTO();
+        ProjectDTO projectDTO = new ProjectDTO();
         projectDTO.setName("test");
-        String js=objectMapper.writeValueAsString(projectDTO);
-        mockMvc.perform(MockMvcRequestBuilders.post(basePath + "-"+"/update").contentType(MediaType.APPLICATION_JSON).
+        String js = objectMapper.writeValueAsString(projectDTO);
+        mockMvc.perform(MockMvcRequestBuilders.post(basePath + "-" + "/update").contentType(MediaType.APPLICATION_JSON).
                 content(js)).andExpect(status().isBadRequest()).andDo(print());
     }
+
     @Test
     @WithUserDetails("test3422")
     @SneakyThrows
     void getProject() {
 
-        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "16"+"/get")).andExpect(status().isOk()).andDo(print());
+        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "16" + "/get")).andExpect(status().isOk()).andDo(print());
 
     }
 
@@ -212,16 +219,17 @@ public class ProjectTest {
     @SneakyThrows
     void getProjectWithNotIdAndNoAccess() {
 
-        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "-1"+"/get")).andExpect(status().isForbidden()).andDo(print());
-        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "20"+"/get")).andExpect(status().isForbidden()).andDo(print());
+        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "-1" + "/get")).andExpect(status().isForbidden()).andDo(print());
+        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "20" + "/get")).andExpect(status().isForbidden()).andDo(print());
 
     }
+
     @Test
     @WithUserDetails("hophay")
     @SneakyThrows
     void projectDeleteNotAccess() {
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(basePath + "16"+"/delete")).andExpect(status().isForbidden()).andDo(print());
+        mockMvc.perform(MockMvcRequestBuilders.delete(basePath + "16" + "/delete")).andExpect(status().isForbidden()).andDo(print());
 
     }
 
@@ -230,11 +238,61 @@ public class ProjectTest {
     @SneakyThrows
     void projectDelete() {
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(basePath + "18"+"/delete")).andExpect(status().isOk()).andDo(print());
+        mockMvc.perform(MockMvcRequestBuilders.delete(basePath + "18" + "/delete")).andExpect(status().isOk()).andDo(print());
 
     }
 
+    @Test
+    @SneakyThrows
+    void generateUrlShare() {
+        Assertions.assertDoesNotThrow(() -> {
+            Map<String, String> map = new HashMap<>();
+            map.put(SharedURLField.ROLE.name(), GrantedRole.SUB_SUPER_USER.name());
+            map.put(SharedURLField.PROJECT_ID.name(), "13");
 
+            String res = CryptMeta.encryptMap(map);
+            System.out.println("decode:" + CryptMeta.decryptMap(res).toString());
+            ;
+            System.out.println(res);
+            System.out.println(CryptMeta.decryptMap(res));
+            map.clear();
+            map.put("ROLE", GrantedRole.SUB_SUPER_USER.name());
+            map.put(SharedURLField.PROJECT_ID.name(), "");
+            res = CryptMeta.encryptMap(map);
+            System.out.println(res);
+            System.out.println(CryptMeta.decryptMap(res));
+            map.clear();
+            map.put("ROLE", GrantedRole.SUB_SUPER_USER.name());
+            map.put("", "");
+            res = CryptMeta.encryptMap(map);
+            System.out.println(res);
+            System.out.println(CryptMeta.decryptMap(res));
+
+
+        });
+
+    }
+
+    @Test
+    @SneakyThrows
+    @WithUserDetails("hophay")
+    void assignToProject() {
+        mockMvc.perform(MockMvcRequestBuilders.post(basePath + "/assign?token=3d04790adcce0bc814787f02cb50e2d2d4d372f2910c12df3ff2fee6e585ed7b3dac730a9d604a310057b0d1e7213460")).andExpect(status().isConflict()).andDo(print());
+    }
+
+    @Test
+    @SneakyThrows
+    @WithUserDetails("test3422")
+    void assignToProjectOk() {
+        mockMvc.perform(MockMvcRequestBuilders.post(basePath + "/assign?token=3d04790adcce0bc814787f02cb50e2d2d4d372f2910c12dfз9ш()*3ff2fee6e585ed7b3dac730a9d604a310057b0d1e7213460")).andExpect(status().isOk()).andDo(print());
+    }
+
+    @Test
+    @SneakyThrows
+    @WithUserDetails("test3422")
+    void assignToProjectInvalid() {
+        mockMvc.perform(MockMvcRequestBuilders.post(basePath + "/assign?token=3d04790adcce0bc814787f02cb50e2d2d4d372f2910c12df3ff2fee6e585ed7b3dac730a9d604a310057b0d1e7213460жыдлупдлзщзщ")).andExpect(status().isBadRequest()).andDo(print());
+    }
 
 
 }

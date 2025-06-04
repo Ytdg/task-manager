@@ -1,8 +1,10 @@
 package com.api.manager.service;
 
 import com.api.manager.auth.UserDetailImpl;
+import com.api.manager.common.CryptMeta;
 import com.api.manager.common.GrantedRole;
 import com.api.manager.common.Mapping;
+import com.api.manager.common.SharedURLField;
 import com.api.manager.entity.MetaDB;
 import com.api.manager.exception_handler_contoller.NotGetObjException;
 import com.api.manager.exception_handler_contoller.NotSavedProject;
@@ -18,11 +20,14 @@ import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.InternalException;
+import org.jspecify.annotations.Nullable;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -33,6 +38,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
 
     private final MetaRepository metaRepository;
+    private long idProject;
 
     ProjectService(ProjectRepository projectRepository, RoleRepository roleRepository, MetaRepository repository) {
         this.projectRepository = projectRepository;
@@ -74,7 +80,7 @@ public class ProjectService {
 
     //refactoring method
     @Transactional
-    public ProjectDTO create(ProjectDTO projectDTO, @NonNull UserDetailImpl userDetail) {
+    public ProjectDTO create(@NonNull ProjectDTO projectDTO, @NonNull UserDetailImpl userDetail) {
         try {
             UserDb userDb = new UserDb(userDetail.getId());
             userDb.setName(userDetail.getName());
@@ -102,7 +108,7 @@ public class ProjectService {
 
     //refactoring method
     @Transactional
-    public ProjectDTO save(ProjectDTO projectDTO, long idProject) {
+    public ProjectDTO save(@NonNull ProjectDTO projectDTO, long idProject) {
         try {
             ProjectDb projectDb = projectRepository.findById(idProject).orElseThrow();
             projectDb.setName(projectDTO.getName());
@@ -116,5 +122,47 @@ public class ProjectService {
         }
     }
 
+    public String getUrlShared(@NonNull GrantedRole requiredRole, long idProject) {
+        if (!projectRepository.existsById(idProject)) {
+            throw new NoSuchElementException("Project not Found");
+        }
+        return CryptMeta.encryptMap((Map.of(SharedURLField.ROLE.name(), requiredRole.name(), SharedURLField.PROJECT_ID.name(),
+                String.valueOf(idProject))));
+    }
+
+    //refactoring
+    public long assignToProject(@NonNull String token, @NonNull UserDetailImpl userDetail) {
+
+        Optional<Map<String, String>> param = CryptMeta.decryptMap(token);
+        if (param.isEmpty()) {
+            throw new NoSuchElementException("Incorrect param");
+        }
+
+        Function<Map<String, String>, Optional<Map.Entry<GrantedRole, Long>>> extract = m -> {
+            if (m.size() != 2) {
+                return Optional.empty();
+            }
+            try {
+                return Optional.of(new AbstractMap.SimpleEntry<>(GrantedRole.valueOf(m.get(SharedURLField.ROLE.name())),
+                        Long.parseLong(m.get(SharedURLField.PROJECT_ID.name()))));
+            } catch (Exception e) {
+                return Optional.empty();
+            }
+        };
+        Map.Entry<GrantedRole, Long> values = extract.apply(param.get()).orElseThrow();
+        UserDb userDb = new UserDb(userDetail.getId());
+        ProjectDb projectDb = new ProjectDb(values.getValue());
+        if (roleRepository.existsByUserDbAndProjectDb(userDb, projectDb)) {
+            throw new NotSavedStoreUserException("There is already such a user on the project.", new Throwable());
+        }
+        try {
+            roleRepository.save(new RoleDb(userDb, values.getKey(), projectDb));
+            return projectDb.getId();
+        } catch (Exception e) {
+            throw new InternalException("Failed save role user.", e);
+        }
+
+
+    }
 
 }

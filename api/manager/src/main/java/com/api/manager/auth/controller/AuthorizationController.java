@@ -40,6 +40,7 @@ public class AuthorizationController {
             " Правило вилидации:указаны")
     public ResponseEntity<?> sigIn(@Valid @RequestBody RegAuth regAuth) {
         jwtUserDetailService.save(regAuth);
+
         return ResponseEntity.ok("Регистрация успешна");
     }
 

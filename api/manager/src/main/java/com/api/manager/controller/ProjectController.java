@@ -1,5 +1,6 @@
 package com.api.manager.controller;
 
+import com.api.manager.common.GrantedRole;
 import com.api.manager.common.SecurityUtils;
 import com.api.manager.dto.ProjectDTO;
 import com.api.manager.service.ProjectService;
@@ -60,7 +61,7 @@ public class ProjectController {
     @GetMapping("/{project_id}/get")
     @ResponseBody
     @PreAuthorize("@inspectGrantedRole.hasUserOnProject(#projectId)")
-    @Tag(name = "/update", description = "Доступен пользователю с любой ролью.Получить проект.\n" +
+    @Tag(name = "/get", description = "Доступен пользователю с любой ролью.Получить проект.\n" +
             "возвращает: HttpStatus.INTERNAL_SERVER_ERROR -если проблема с сервером,\n" +
             "HttpStatus.FORBIDDEN - если пользователь не имеет доступ к данному проекту/проект отсутствует")
     ProjectDTO getProject(@PathVariable("project_id") Long projectId) {
@@ -69,8 +70,32 @@ public class ProjectController {
 
     @DeleteMapping("/{project_id}/delete")
     @PreAuthorize("@inspectGrantedRole.hasSuperUser(#projectId)")
+    @Tag(name = "/delete", description = "Доступен пользователю с  ProductOwner(ProductOwner любой).Удалить проект.\n" +
+            "возвращает: HttpStatus.INTERNAL_SERVER_ERROR -если проблема с сервером,\n" +
+            "HttpStatus.FORBIDDEN - если пользователь не имеет доступ к данному проекту/проект отсутствует")
     void deleteProject(@PathVariable("project_id") Long projectId) {
         projectService.delete(projectId);
+    }
+
+    @GetMapping("/{project_id}/shared")
+    @PreAuthorize("@inspectGrantedRole.hasSuperUserOrSubSuperUser(#projectId)")
+    @ResponseBody
+    @Tag(name = "/shared", description = "Доступен пользователю с ролью ProductOwner/Scrum мастер любой).Поделиться.\n" +
+            "возвращает:" + "HttpStatus.FORBIDDEN - если пользователь не имеет доступ к данному проекту/проект отсутствует/неверные параметры\n"+
+    "в body:  /share?token=."+"У тебя конечная точка /share пользователь переходит по ссылку твой адрес +/share?token=.\n"+
+    "Даллее если у тебя есть токен делаешь запрос на /assign, если его нет то получаешь. ")
+    String getSharedUrl(@PathVariable("project_id") Long projectId, @RequestParam(value = "role") GrantedRole requiredRole) {
+        return "/share?token=" + projectService.getUrlShared(requiredRole, projectId);
+    }
+
+    //->Uk9MRT1VU0VSL1BST0pFQ1RfSUQ9MTUwLw==
+    @PostMapping("/assign")
+    @ResponseBody
+    @Tag(name = "/assign", description = "Доступен пользователю с ролью любой). Назначить на проект.\n" +
+            "возвращает:" + "HttpStatus.FORBIDDEN - если пользователь не имеет доступ к данному проекту/проект отсутствует/неверные параметры/неккоректный токен\n" +
+            "В body: id проекта. Потом можеть перенаправить на сам проект и получить проект/taskBoard и тд")
+    long assignToProject(@RequestParam(value = "token") String token) {
+       return projectService.assignToProject(token, SecurityUtils.getCurrentUserDetail());
     }
 
 
