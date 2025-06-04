@@ -83,7 +83,9 @@ public class ProjectController {
     @Tag(name = "/shared", description = "Доступен пользователю с ролью ProductOwner/Scrum мастер любой).Поделиться.\n" +
             "возвращает:" + "HttpStatus.FORBIDDEN - если пользователь не имеет доступ к данному проекту/проект отсутствует/неверные параметры\n"+
     "в body:  /share?token=."+"У тебя конечная точка /share пользователь переходит по ссылку твой адрес +/share?token=.\n"+
-    "Даллее если у тебя есть токен делаешь запрос на /assign, если его нет то получаешь. ")
+    "Даллее если у тебя есть токен делаешь запрос на /assign, если его нет то получаешь. " +
+            "role параметр имеет значения USER|SUB_SUPER_USER|SUPER_USER: USER (Разрабаб) " +
+            "SUB_SUPER_USER(SCRUM) "+" SUPER_USER(Product Owner)")
     String getSharedUrl(@PathVariable("project_id") Long projectId, @RequestParam(value = "role") GrantedRole requiredRole) {
         return "/share?token=" + projectService.getUrlShared(requiredRole, projectId);
     }
@@ -92,11 +94,9 @@ public class ProjectController {
     @PostMapping("/assign")
     @ResponseBody
     @Tag(name = "/assign", description = "Доступен пользователю с ролью любой). Назначить на проект.\n" +
-            "возвращает:" + "HttpStatus.FORBIDDEN - если пользователь не имеет доступ к данному проекту/проект отсутствует/неверные параметры/неккоректный токен\n" +
+            "возвращает:" +" HttpStatus.NOT_FOUND - если некоректные токен"+" HttpStatus.CONFLICT - если пользователь уже есть на проекте " +
             "В body: id проекта. Потом можеть перенаправить на сам проект и получить проект/taskBoard и тд")
     long assignToProject(@RequestParam(value = "token") String token) {
        return projectService.assignToProject(token, SecurityUtils.getCurrentUserDetail());
     }
-
-
 }

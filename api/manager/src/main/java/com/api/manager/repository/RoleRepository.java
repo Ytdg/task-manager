@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RoleRepository extends JpaRepository<RoleDb, Long> {
@@ -16,4 +17,7 @@ public interface RoleRepository extends JpaRepository<RoleDb, Long> {
 
     Boolean existsByGrantedAndUserDbAndProjectDb(@NonNull GrantedRole granted, @NonNull UserDb userDb, @NonNull ProjectDb projectDb);
     Boolean existsByUserDbAndProjectDb(@NonNull UserDb userDb,@NonNull ProjectDb projectDb);
+
+
+    Optional<RoleDb> findByUserDbAndProjectDb(UserDb userDb, ProjectDb projectDb);
 }
