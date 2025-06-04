@@ -16,8 +16,8 @@ public class ExceptionStoreHandler {
         return ErrorResponse.create(ex, HttpStatus.CONFLICT, ex.getLocalizedMessage());
     }
 
-    @ExceptionHandler(NotSavedProject.class)
-    public ErrorResponse handleResourceNotSaveProjectStoreException(NotSavedProject ex) {
+    @ExceptionHandler(NotSavedResource.class)
+    public ErrorResponse handleResourceNotSaveProjectStoreException(NotSavedResource ex) {
         return ErrorResponse.create(ex, HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
     }
 

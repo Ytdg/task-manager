@@ -5,9 +5,7 @@ import com.api.manager.common.CryptMeta;
 import com.api.manager.common.GrantedRole;
 import com.api.manager.common.Mapping;
 import com.api.manager.common.SharedURLField;
-import com.api.manager.entity.MetaDB;
-import com.api.manager.exception_handler_contoller.NotGetObjException;
-import com.api.manager.exception_handler_contoller.NotSavedProject;
+import com.api.manager.exception_handler_contoller.NotSavedResource;
 import com.api.manager.exception_handler_contoller.NotSavedStoreUserException;
 import com.api.manager.entity.ProjectDb;
 import com.api.manager.entity.RoleDb;
@@ -20,14 +18,10 @@ import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.InternalException;
-import org.jspecify.annotations.Nullable;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -116,7 +110,7 @@ public class ProjectService {
             return Mapping.toProjectDto(projectDb);
         } catch (Exception ex) {
             if (ex instanceof NoSuchElementException) {
-                throw new NotSavedProject(ex.getMessage(), ex);
+                throw new NotSavedResource(ex.getMessage(), ex);
             }
             throw new InternalException("Failed save project", ex);
         }
