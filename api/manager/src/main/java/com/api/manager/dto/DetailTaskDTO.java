@@ -22,4 +22,7 @@ public class TaskDTO {
     @NonNull
     @NotBlank
     private String detail;
+    @NonNull
+    private TeamDTO teamDTO;
+
 }
