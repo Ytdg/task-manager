@@ -293,6 +293,13 @@ public class ProjectTest {
     void assignToProjectInvalid() {
         mockMvc.perform(MockMvcRequestBuilders.post(basePath + "/assign?token=3d04790adcce0bc814787f02cb50e2d2d4d372f2910c12df3ff2fee6e585ed7b3dac730a9d604a310057b0d1e7213460жыдлупдлзщзщ")).andExpect(status().isBadRequest()).andDo(print());
     }
+    @Test
+    @SneakyThrows
+    @WithUserDetails("test3422")
+    void  analityc(){
+        mockMvc.perform(MockMvcRequestBuilders.get("/analytics/217" + "/get")).andExpect(status().isOk()).andDo(print());
+
+    }
 
 
 }
