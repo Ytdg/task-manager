@@ -50,4 +50,9 @@ public class SprintDb {//LocalDateTime
         this.purpose = purpose;
         this.status = status;
     }
+
+    public SprintDb(@NonNull Long idSprint) {
+        this.id = idSprint;
+    }
+
 }

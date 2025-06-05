@@ -11,7 +11,7 @@ import lombok.NonNull;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DetailTaskDTO {
+public class TaskDTO {
     @Nullable
     private Long id;
     @Nullable
@@ -21,7 +21,4 @@ public class DetailTaskDTO {
     @NonNull
     @NotBlank
     private String detail;
-    @NonNull
-    private TeamDTO teamDTO;
-
 }

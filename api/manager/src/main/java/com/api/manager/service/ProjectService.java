@@ -5,6 +5,7 @@ import com.api.manager.common.CryptMeta;
 import com.api.manager.common.GrantedRole;
 import com.api.manager.common.Mapping;
 import com.api.manager.common.SharedURLField;
+import com.api.manager.dto.RoleDTO;
 import com.api.manager.exception_handler_contoller.NotSavedResource;
 import com.api.manager.exception_handler_contoller.NotSavedStoreUserException;
 import com.api.manager.entity.ProjectDb;
@@ -123,7 +124,9 @@ public class ProjectService {
         return CryptMeta.encryptMap((Map.of(SharedURLField.ROLE.name(), requiredRole.name(), SharedURLField.PROJECT_ID.name(),
                 String.valueOf(idProject))));
     }
-
+    public List<RoleDTO> getUsersRoleOnProject(@NonNull Long idProject) {
+        return roleRepository.getAllByProjectDb(new ProjectDb(idProject)).stream().map(Mapping::toRoleDTO).toList();
+    }
     //refactoring
     public long assignToProject(@NonNull String token, @NonNull UserDetailImpl userDetail) {
 

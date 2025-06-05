@@ -3,7 +3,9 @@ package com.api.manager.entity;
 import com.api.manager.common.StatusObj;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Data
@@ -16,6 +18,19 @@ public class TeamDb {
     @NonNull
     @NotBlank
     private String name;
+
     @NonNull
-    private  Long idTask;
+    @OneToOne
+    @JoinColumn(name = "id_task", nullable = false)
+    private TaskDb taskDb;
+
+    public TeamDb(@NonNull TaskDb taskDb, @NonNull String name) {
+        this.taskDb = taskDb;
+        this.name = name;
+    }
+    public  TeamDb(@NonNull Long id){
+        this.id=id;
+    }
+    public  TeamDb(){};
+
 }

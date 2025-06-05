@@ -34,4 +34,9 @@ public class RoleDb {
         this.projectDb = projectDb;
 
     }
+
+    public RoleDb(@NonNull Long id) {
+        this.id = id;
+    }
+
 }

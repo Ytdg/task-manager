@@ -16,8 +16,12 @@ public interface RoleRepository extends JpaRepository<RoleDb, Long> {
     List<RoleDb> getAllByUserDb(@NonNull UserDb userDb);
 
     Boolean existsByGrantedAndUserDbAndProjectDb(@NonNull GrantedRole granted, @NonNull UserDb userDb, @NonNull ProjectDb projectDb);
-    Boolean existsByUserDbAndProjectDb(@NonNull UserDb userDb,@NonNull ProjectDb projectDb);
 
+    Boolean existsByUserDbAndProjectDb(@NonNull UserDb userDb, @NonNull ProjectDb projectDb);
+
+    Boolean existsByIdAndProjectDbAndUserDb(Long id, ProjectDb projectDb, UserDb userDb);
 
     Optional<RoleDb> findByUserDbAndProjectDb(UserDb userDb, ProjectDb projectDb);
+
+    List<RoleDb> getAllByProjectDb(ProjectDb projectDb);
 }

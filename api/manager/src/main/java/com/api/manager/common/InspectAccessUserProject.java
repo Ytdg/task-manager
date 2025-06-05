@@ -63,9 +63,7 @@ public class InspectAccessUserProject {
     public boolean isAccessSprintOnProjectAndSuperOrSubUser(@NonNull Long idProject, @NonNull Long sprintId) {
         return sprintRepository.existsByIdAndIdProject(sprintId, idProject) && hasSuperUserOrSubSuperUser(idProject);
     }
-    public boolean isAccessSprintOnProjectAndSuperOrSubUserOrUser(@NonNull Long idProject, @NonNull Long sprintId) {
-        return sprintRepository.existsByIdAndIdProject(sprintId, idProject) && hasSuperUserOrSubSuperUser(idProject);
-    }
+
 
 
 }

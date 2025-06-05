@@ -1,27 +1,30 @@
 package com.api.manager.dto;
 
-import com.api.manager.common.StatusObj;
 import jakarta.annotation.Nullable;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DetailTaskDTO {
+public class TeamDTO {
     @Nullable
     private Long id;
-    @Nullable
-    private Long idSprint;
-    @Nullable
-    private StatusObj status;
     @NonNull
     @NotBlank
-    private String detail;
+    private String name;
+    @Nullable
+    private Long idTask;
     @NonNull
-    private TeamDTO teamDTO;
-
+    @NotEmpty
+    private List<HiredEmployeeDTO> hiredEmployeeDTOList;
 }
