@@ -47,6 +47,7 @@ public class TaskBoardService {
                 ));
 
         if (!allRolesValid) {
+            log.error("NOT VALID:"+ idProject);
             throw new NotSavedResource("Not Available", new Throwable());
         }
     }
@@ -71,6 +72,7 @@ public class TaskBoardService {
                             .toList()
             );
         } catch (Exception e) {
+            log.error("CREATE EMPLOYEE:"+e.getMessage());
             throw new NotSavedResource("Invalid data:" + e.getMessage(), e);
         }
     }
