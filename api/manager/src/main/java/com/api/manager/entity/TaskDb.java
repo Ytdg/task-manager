@@ -33,4 +33,7 @@ public class TaskDb {
         this.detail=detail;
     }
     public TaskDb(){}
+    public  TaskDb(@NonNull Long idTask){
+        this.id=idTask;
+    }
 }

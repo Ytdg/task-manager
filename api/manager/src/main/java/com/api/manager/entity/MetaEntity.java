@@ -8,13 +8,13 @@ import java.time.LocalDate;
 @Entity
 @Data
 @Table(name = "meta_project")
-public class MetaDB {
+public class MetaEntity {
     @Id
     private final Long idProject;
 
     private LocalDate localDate;
 
-    public MetaDB(Long idProject) {
+    public MetaEntity(Long idProject) {
         this.idProject = idProject;
     }
 }

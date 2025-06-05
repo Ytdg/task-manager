@@ -48,8 +48,8 @@ public class ProjectService {
                     .map(r -> {
                         ProjectDTO projectDto = Mapping.toProjectDto(r.getProjectDb());
                         metaRepository.findById(r.getId())
-                                .ifPresentOrElse(projectDto::setMetaDB,
-                                        () -> log.info("MetaDB not found for role id: {}", r.getId()));
+                                .ifPresentOrElse(projectDto::setMetaEntity,
+                                        () -> log.info("MetaEntity not found for role id: {}", r.getId()));
                         return projectDto;
                     })
                     .toList();
@@ -63,7 +63,7 @@ public class ProjectService {
     public ProjectDTO get(long idProject) {
         try {
             ProjectDTO projectDTO = Mapping.toProjectDto(projectRepository.findById(idProject).orElseThrow());
-            metaRepository.findById(idProject).ifPresentOrElse(projectDTO::setMetaDB, () -> log.info("Not meta project"));
+            metaRepository.findById(idProject).ifPresentOrElse(projectDTO::setMetaEntity, () -> log.info("Not meta project"));
             return projectDTO;
         } catch (Exception e) {
             if (e instanceof NoSuchElementException) {

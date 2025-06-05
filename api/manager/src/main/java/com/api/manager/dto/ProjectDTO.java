@@ -1,6 +1,6 @@
 package com.api.manager.dto;
 
-import com.api.manager.entity.MetaDB;
+import com.api.manager.entity.MetaEntity;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -19,7 +19,7 @@ public class ProjectDTO {
     @Nullable
     private UserDTO creator;
     @Nullable
-    private MetaDB metaDB;
+    private MetaEntity metaEntity;
 
     public ProjectDTO() {
     }

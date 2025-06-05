@@ -98,7 +98,7 @@ public class ProjectController {
             "SUB_SUPER_USER(SCRUM) " + " SUPER_USER(Product Owner)")
     String getSharedUrl(@PathVariable("project_id") Long projectId, @RequestParam(value = "role") GrantedRole requiredRole) {
         return "/share?token=" + projectService.getUrlShared(requiredRole, projectId);
-    }
+    }//http://localhost:5173/share?token=wit0wite0itw0tiew
 
     //->Uk9MRT1VU0VSL1BST0pFQ1RfSUQ9MTUwLw==
     @PostMapping("/assign")
