@@ -19,7 +19,7 @@ public interface RoleRepository extends JpaRepository<RoleDb, Long> {
 
     Boolean existsByUserDbAndProjectDb(@NonNull UserDb userDb, @NonNull ProjectDb projectDb);
 
-    Boolean existsByIdAndProjectDbAndUserDb(Long id, ProjectDb projectDb, UserDb userDb);
+    Boolean existsByIdAndProjectDb(Long id, ProjectDb projectDb);
 
     Optional<RoleDb> findByUserDbAndProjectDb(UserDb userDb, ProjectDb projectDb);
 

@@ -30,7 +30,7 @@ public class TaskBoardController {
             "При неккоретных параметрах в body")
     DetailTaskDTO create(@PathVariable("project_id") Long projectId, @RequestBody @Valid DetailTaskDTO detailTaskDTO,
                          @RequestParam(value = "id_sprint") Long idSprint) {
-        return taskBoardService.create(detailTaskDTO, idSprint, projectId, SecurityUtils.getCurrentUserDetail());
+        return taskBoardService.create(detailTaskDTO, idSprint, projectId);
     }
 
     @GetMapping("/get_task_sprint")

@@ -38,16 +38,15 @@ public class TaskBoardService {
         this.hiredEmployeeRepository = hiredEmployeeRepository;
     }
 
-    private void validateEmployees(List<HiredEmployeeDTO> employeeDTOList, Long idProject, Long userId) {
+    private void validateEmployees(List<HiredEmployeeDTO> employeeDTOList, Long idProject) {
         boolean allRolesValid = employeeDTOList.stream()
-                .allMatch(employeeDTO -> roleRepository.existsByIdAndProjectDbAndUserDb(
+                .allMatch(employeeDTO -> roleRepository.existsByIdAndProjectDb(
                         employeeDTO.getIdRole(),
-                        new ProjectDb(idProject),
-                        new UserDb(userId)
+                        new ProjectDb(idProject)
                 ));
 
         if (!allRolesValid) {
-            log.error("NOT VALID:"+ idProject);
+            log.error("NOT VALID:" + idProject);
             throw new NotSavedResource("Not Available", new Throwable());
         }
     }
@@ -72,19 +71,19 @@ public class TaskBoardService {
                             .toList()
             );
         } catch (Exception e) {
-            log.error("CREATE EMPLOYEE:"+e.getMessage());
+            log.error("CREATE EMPLOYEE:" + e.getMessage());
             throw new NotSavedResource("Invalid data:" + e.getMessage(), e);
         }
     }
 
     @Transactional
-    public DetailTaskDTO create(@NonNull DetailTaskDTO detailTaskDTO, @NonNull Long idSpring, @NonNull Long idProject, @NonNull UserDetailImpl userDetail) {
-
-        validateEmployees(detailTaskDTO.getTeamDTO().getHiredEmployeeDTOList(), idProject, userDetail.getId());
+    public DetailTaskDTO create(@NonNull DetailTaskDTO detailTaskDTO, @NonNull Long idSpring, @NonNull Long idProject) {
+        log.info("ROLE EMPLOYEE:" + detailTaskDTO.getTeamDTO().toString());
+        validateEmployees(detailTaskDTO.getTeamDTO().getHiredEmployeeDTOList(), idProject);
         TaskDb taskDb = createTask(idSpring, detailTaskDTO.getDetail());
         TeamDb teamDb = createTeam(taskDb, detailTaskDTO.getTeamDTO().getName());
         List<HiredEmployeeDB> employeeDBS = createHiredEmployees(detailTaskDTO.getTeamDTO().getHiredEmployeeDTOList()
-                .stream().peek(s -> s.setNameUser(userDetail.getName())), teamDb);
+                .stream().peek(s -> s.setNameUser(roleRepository.findById(s.getIdRole()).orElseThrow().getUserDb().getName())), teamDb);
         return Mapping.toDetailTaskDTO(taskDb, Mapping.toTeamDTO(teamDb, employeeDBS.stream().map(Mapping::toHiredEmployeeDTO).toList()));
     }
 

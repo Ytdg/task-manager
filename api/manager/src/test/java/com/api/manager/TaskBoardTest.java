@@ -58,7 +58,7 @@ public class TaskBoardTest {
 
             String jsObj = objectMapper.writeValueAsString(valid());
 
-            mockMvc.perform(MockMvcRequestBuilders.post(basePath + "create?id_sprint=314").contentType(MediaType.APPLICATION_JSON).content(jsObj)).
+            mockMvc.perform(MockMvcRequestBuilders.post(basePath + "create?id_sprint=816").contentType(MediaType.APPLICATION_JSON).content(jsObj)).
                     andExpect(status().isOk()).andDo(print());
         }
 
