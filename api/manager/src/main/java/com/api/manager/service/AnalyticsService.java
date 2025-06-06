@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+//all refactoring
 @Service
 public class AnalyticsService {
 
@@ -63,10 +64,11 @@ public class AnalyticsService {
     private boolean hasTimeExpired(LocalDateTime dateTime) {
         return dateTime.isBefore(LocalDateTime.now());
     }
-
+//rafactoring
     private List<SprintDb> getAll(long idProject) {
         return sprintRepository.findSprintDbByIdProject(idProject).stream().peek(s -> {
-            boolean isCompleted = taskBoardRepository.getAllBySprintDb(s).stream().allMatch(taskDb -> taskDb.getStatus() == StatusObj.COMPLETE);
+            List<TaskDb> taskDbs=taskBoardRepository.getAllBySprintDb(s);
+            boolean isCompleted = !taskDbs.isEmpty()&&taskDbs.stream().allMatch(taskDb -> taskDb.getStatus() == StatusObj.COMPLETE);
             if (isCompleted) {
                 s.setStatus(StatusObj.COMPLETE);
             }

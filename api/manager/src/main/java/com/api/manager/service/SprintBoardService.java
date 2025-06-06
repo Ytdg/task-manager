@@ -4,6 +4,7 @@ import com.api.manager.common.Mapping;
 import com.api.manager.common.StatusObj;
 import com.api.manager.dto.SprintDTO;
 import com.api.manager.entity.SprintDb;
+import com.api.manager.entity.TaskDb;
 import com.api.manager.exception_handler_contoller.NotSavedResource;
 import com.api.manager.repository.SprintRepository;
 import com.api.manager.repository.TaskBoardRepository;
@@ -46,7 +47,8 @@ public class SprintBoardService {
     public List<SprintDTO> getAll(long idProject) {
         return sprintRepository.findSprintDbByIdProject(idProject).stream().map(s -> {
             SprintDTO sprintDTO = Mapping.toSprintDTO(s);
-            boolean isCompleted = taskBoardRepository.getAllBySprintDb(s).stream().allMatch(taskDb -> taskDb.getStatus() == StatusObj.COMPLETE);
+            List<TaskDb> taskDbs=taskBoardRepository.getAllBySprintDb(s);
+            boolean isCompleted = !taskDbs.isEmpty()&&taskDbs.stream().allMatch(taskDb -> taskDb.getStatus() == StatusObj.COMPLETE);
             if (isCompleted) {
                 sprintDTO.setStatus(StatusObj.COMPLETE);
             }
