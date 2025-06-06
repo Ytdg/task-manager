@@ -1,6 +1,7 @@
 package com.api.manager.controller;
 
 import com.api.manager.common.SecurityUtils;
+import com.api.manager.common.StatusObj;
 import com.api.manager.dto.DetailTaskDTO;
 import com.api.manager.dto.TaskDTO;
 import com.api.manager.service.TaskBoardService;
@@ -49,6 +50,17 @@ public class TaskBoardController {
             "возвращает: HttpStatus.FORBIDDEN -если нет доступа")
     List<TaskDTO> getAllTaskUserRole(@PathVariable("project_id") Long projectId) {
         return taskBoardService.getTaskCommandProject(SecurityUtils.getCurrentUserDetail(), projectId);
+    }
+
+    @PutMapping("/set_status")
+    @ResponseBody
+    @PreAuthorize("@inspectGrantedRole.hasUserOnTask(#projectId,#idTask)")
+    @Tag(name = "/get_all", description = "Доступен пользователям с ролями USER. Изменить статус выполнения задачи .\n" +
+            "возвращает: HttpStatus.FORBIDDEN -если нет доступа" +
+            " Доступный статус:  TO_DO,\n" +
+            "    COMPLETE, EXPIRED")
+    TaskDTO setStatus(@PathVariable("project_id") Long projectId, @RequestParam(value = "id_task") Long idTask, @RequestBody StatusObj statusObj) {
+        return taskBoardService.setStatusTask(statusObj, idTask);
     }
 }
    /* @GetMapping("/get_all")

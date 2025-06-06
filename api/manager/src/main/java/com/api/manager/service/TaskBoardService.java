@@ -125,6 +125,12 @@ public class TaskBoardService {
                 .orElse(Collections.emptyList());
     }
 
+    public TaskDTO setStatusTask(@NonNull StatusObj statusObj, @NonNull Long idTask) {
+        TaskDb taskDb = taskBoardRepository.findById(idTask).orElseThrow();
+        taskDb.setStatus(statusObj);
+        taskDb = taskBoardRepository.save(taskDb);
+        return Mapping.toTaskDTO(taskDb);
+    }
   /*  public List<DetailTaskDTO> getAll(@NonNull Long idSpring, @NonNull UserDetailImpl userDetail, @NonNull Long idProject) {
 
     }*/

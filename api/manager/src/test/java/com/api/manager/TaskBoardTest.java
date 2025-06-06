@@ -1,6 +1,7 @@
 package com.api.manager;
 
 import com.api.manager.auth.service.JwtUserDetailService;
+import com.api.manager.common.StatusObj;
 import com.api.manager.dto.DetailTaskDTO;
 import com.api.manager.dto.HiredEmployeeDTO;
 import com.api.manager.dto.TeamDTO;
@@ -125,6 +126,15 @@ public class TaskBoardTest {
     @WithUserDetails("test3422")
     void getTasksCommandUserIsForbbiden() {
         mockMvc.perform(MockMvcRequestBuilders.get("/task_board/216" + "/get_task_command")).andExpect(status().isForbidden()).andDo(print());
+
+    }
+    @Test
+    @SneakyThrows
+    @WithUserDetails("test3422")
+    void  setStatusOn(){
+        String ress=objectMapper.writeValueAsString(StatusObj.COMPLETE);
+        System.out.println(ress);
+        mockMvc.perform(MockMvcRequestBuilders.put("/task_board/217" + "/set_status?id_task=129").contentType(MediaType.APPLICATION_JSON).content(ress)).andExpect(status().isOk()).andDo(print());
 
     }
 

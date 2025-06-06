@@ -6,6 +6,7 @@ import com.api.manager.dto.SprintDTO;
 import com.api.manager.entity.SprintDb;
 import com.api.manager.exception_handler_contoller.NotSavedResource;
 import com.api.manager.repository.SprintRepository;
+import com.api.manager.repository.TaskBoardRepository;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,11 @@ import java.util.NoSuchElementException;
 @Service
 public class SprintBoardService {
     private final SprintRepository sprintRepository;
+    private final TaskBoardRepository taskBoardRepository;
 
-    SprintBoardService(SprintRepository sprintRepository) {
+    SprintBoardService(TaskBoardRepository taskBoardRepository, SprintRepository sprintRepository) {
         this.sprintRepository = sprintRepository;
+        this.taskBoardRepository = taskBoardRepository;
     }
 
     private LocalDateTime getTimeExpired(Integer interval) {
@@ -43,6 +46,10 @@ public class SprintBoardService {
     public List<SprintDTO> getAll(long idProject) {
         return sprintRepository.findSprintDbByIdProject(idProject).stream().map(s -> {
             SprintDTO sprintDTO = Mapping.toSprintDTO(s);
+            boolean isCompleted = taskBoardRepository.getAllBySprintDb(s).stream().allMatch(taskDb -> taskDb.getStatus() == StatusObj.COMPLETE);
+            if (isCompleted) {
+                sprintDTO.setStatus(StatusObj.COMPLETE);
+            }
             if (hasTimeExpired(s.getTimeExpired())) {
                 sprintDTO.setStatus(StatusObj.EXPIRED);
             }

@@ -3,8 +3,10 @@ package com.api.manager;
 import com.api.manager.auth.service.JwtUserDetailService;
 import com.api.manager.common.StatusObj;
 import com.api.manager.dto.SprintDTO;
+import com.api.manager.entity.SprintDb;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -12,10 +14,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,7 +60,6 @@ public class SprintBoardTest {
     }
 
 
-
     @Test
     @SneakyThrows
     @WithUserDetails("test3422")
@@ -81,8 +85,12 @@ public class SprintBoardTest {
     @SneakyThrows
     @WithUserDetails("test3422")
     void getAll() {
-        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "get_all")).andExpect(status().isOk()).andDo(print());
-
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/sprint_board/217/" + "get_all")).andExpect(status().isOk()).andDo(print()).andReturn();
+        String jsonResponse = mvcResult.getResponse().getContentAsString();
+        List<SprintDb> list = Arrays.asList(objectMapper.readValue(jsonResponse, SprintDb[].class));
+        Assertions.assertDoesNotThrow(()->{
+            list.stream().filter(s->s.getStatus()==StatusObj.COMPLETE).findFirst().orElseThrow();
+        },"Not COMPLETED");
     }
 
     @Test
@@ -92,19 +100,20 @@ public class SprintBoardTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/sprint_board/1/" + "get_all")).andExpect(status().isForbidden()).andDo(print());
 
     }
+
     @Test
     @SneakyThrows
     @WithUserDetails("test3422")
     void delete() {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/sprint_board/217/delete?id=312" )).andExpect(status().isOk()).andDo(print());
+        mockMvc.perform(MockMvcRequestBuilders.delete("/sprint_board/217/delete?id=312")).andExpect(status().isOk()).andDo(print());
     }
+
     @Test
     @SneakyThrows
     @WithUserDetails("test3422")
     void deleteNotFound() {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/sprint_board/217/delete?id=10000" )).andExpect(status().isNotFound()).andDo(print());
+        mockMvc.perform(MockMvcRequestBuilders.delete("/sprint_board/217/delete?id=10000")).andExpect(status().isNotFound()).andDo(print());
     }
-
 
 
 }
