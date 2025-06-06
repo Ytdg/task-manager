@@ -1,7 +1,9 @@
 package com.api.manager.service;
 
+import com.api.manager.common.Mapping;
 import com.api.manager.common.StatusObj;
 import com.api.manager.dto.AnalyticsDTO;
+import com.api.manager.dto.SprintDTO;
 import com.api.manager.entity.SprintDb;
 import com.api.manager.entity.TaskDb;
 import com.api.manager.repository.SprintRepository;
@@ -10,6 +12,7 @@ import com.api.manager.repository.TeamRepository;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -28,7 +31,7 @@ public class AnalyticsService {
         AnalyticsDTO analyticsDTO = new AnalyticsDTO();
 
         // Получаем спринты проекта
-        List<SprintDb> sprintDbs = sprintRepository.findSprintDbByIdProject(projectId);
+        List<SprintDb> sprintDbs = getAll(projectId);
 
         // Получаем задачи для этих спринтов
         List<TaskDb> taskDbs = taskBoardRepository.findBySprintDbIn(sprintDbs);
@@ -55,6 +58,22 @@ public class AnalyticsService {
         analyticsDTO.setSprintCompletedPer(sprintCompletedPer);
 
         return analyticsDTO;
+    }
+
+    private boolean hasTimeExpired(LocalDateTime dateTime) {
+        return dateTime.isBefore(LocalDateTime.now());
+    }
+
+    private List<SprintDb> getAll(long idProject) {
+        return sprintRepository.findSprintDbByIdProject(idProject).stream().peek(s -> {
+            boolean isCompleted = taskBoardRepository.getAllBySprintDb(s).stream().allMatch(taskDb -> taskDb.getStatus() == StatusObj.COMPLETE);
+            if (isCompleted) {
+                s.setStatus(StatusObj.COMPLETE);
+            }
+            if (hasTimeExpired(s.getTimeExpired())) {
+                s.setStatus(StatusObj.EXPIRED);
+            }
+        }).toList();
     }
 
 }
