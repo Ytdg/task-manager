@@ -125,9 +125,15 @@ public class TaskBoardService {
                 .orElse(Collections.emptyList());
     }
 
-    public TaskDTO setStatusTask(@NonNull StatusObj statusObj, @NonNull Long idTask) {
+    public TaskDTO setStatusTask(@NonNull String statusObj, @NonNull Long idTask) {
+        try {
+            StatusObj.valueOf(statusObj);
+
+        } catch (Exception e) {
+            throw new NotSavedResource("Illegral Status", e);
+        }
         TaskDb taskDb = taskBoardRepository.findById(idTask).orElseThrow();
-        taskDb.setStatus(statusObj);
+        taskDb.setStatus(StatusObj.valueOf(statusObj));
         taskDb = taskBoardRepository.save(taskDb);
         return Mapping.toTaskDTO(taskDb);
     }

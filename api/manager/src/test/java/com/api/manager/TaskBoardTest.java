@@ -132,9 +132,8 @@ public class TaskBoardTest {
     @SneakyThrows
     @WithUserDetails("test3422")
     void  setStatusOn(){
-        String ress=objectMapper.writeValueAsString(StatusObj.COMPLETE);
-        System.out.println(ress);
-        mockMvc.perform(MockMvcRequestBuilders.put("/task_board/217" + "/set_status?id_task=129").contentType(MediaType.APPLICATION_JSON).content(ress)).andExpect(status().isOk()).andDo(print());
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/task_board/217" + "/set_status?id_task=129").contentType(MediaType.APPLICATION_JSON).content(StatusObj.COMPLETE.name())).andExpect(status().isOk()).andDo(print());
 
     }
 

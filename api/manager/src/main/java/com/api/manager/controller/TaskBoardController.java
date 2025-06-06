@@ -59,7 +59,7 @@ public class TaskBoardController {
             "возвращает: HttpStatus.FORBIDDEN -если нет доступа" +
             " Доступный статус:  TO_DO,\n" +
             "    COMPLETE, EXPIRED")
-    TaskDTO setStatus(@PathVariable("project_id") Long projectId, @RequestParam(value = "id_task") Long idTask, @RequestBody StatusObj statusObj) {
+    TaskDTO setStatus(@PathVariable("project_id") Long projectId, @RequestParam(value = "id_task") Long idTask, @RequestBody String statusObj) {
         return taskBoardService.setStatusTask(statusObj, idTask);
     }
 }
