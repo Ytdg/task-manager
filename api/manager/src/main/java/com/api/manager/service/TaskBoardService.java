@@ -126,6 +126,7 @@ public class TaskBoardService {
     }
 
     public TaskDTO setStatusTask(@NonNull String statusObj, @NonNull Long idTask) {
+        log.info("STATUS:"+statusObj);
         try {
             StatusObj.valueOf(statusObj);
 
