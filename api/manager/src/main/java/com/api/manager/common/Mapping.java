@@ -2,16 +2,18 @@ package com.api.manager.common;
 
 import com.api.manager.dto.*;
 import com.api.manager.entity.*;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
+import org.antlr.v4.runtime.misc.Pair;
 
 import java.util.List;
 
 public class Mapping {
 
 
-    public static ProjectDTO toProjectDto(@NotNull ProjectDb projectDb) {
-        return new ProjectDTO(projectDb.getId(), projectDb.getName(), toUserDto(projectDb.getCreator()), null);
+    public static ProjectDTO toProjectDto(@NotNull ProjectDb projectDb, @Nullable MetaEntity metaEntity) {
+        return new ProjectDTO(projectDb.getId(), projectDb.getName(), toUserDto(projectDb.getCreator()), metaEntity);
     }
 
     public static UserDTO toUserDto(@NotNull UserDb userDb) {
