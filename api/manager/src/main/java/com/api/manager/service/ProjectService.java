@@ -70,7 +70,7 @@ public class ProjectService {
         UserDb userDb = new UserDb(userDetail.getId());
         userDb.setName(userDetail.getName());
         Pair<ProjectDb, MetaEntity> projectDb = projectSubService.create(new ProjectDb(projectDTO.getName(), userDb));
-       RoleDb roleDb = new RoleDb(userDb, GrantedRole.SUPER_USER, projectDb.a);
+        RoleDb roleDb = new RoleDb(userDb, GrantedRole.SUPER_USER, projectDb.a);
         roleSubService.create(roleDb);
         return Mapping.toProjectDto(projectDb.a, projectDb.b);
 
@@ -104,6 +104,7 @@ public class ProjectService {
     }
 
     //refactoring
+    @Transactional
     public long assignToProject(@NonNull String token, @NonNull UserDetailImpl userDetail) {
 
         Optional<Map<String, String>> param = CryptMeta.decryptMap(token);

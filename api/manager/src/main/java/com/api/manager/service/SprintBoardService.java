@@ -8,8 +8,11 @@ import com.api.manager.entity.TaskDb;
 import com.api.manager.exception_handler_contoller.NotSavedResource;
 import com.api.manager.repository.SprintRepository;
 import com.api.manager.repository.TaskBoardRepository;
+import com.api.manager.subservice.SprintSubService;
+import com.api.manager.subservice.TaskSubService;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
@@ -19,53 +22,32 @@ import java.util.NoSuchElementException;
 
 @Service
 public class SprintBoardService {
-    private final SprintRepository sprintRepository;
-    private final TaskBoardRepository taskBoardRepository;
 
-    SprintBoardService(TaskBoardRepository taskBoardRepository, SprintRepository sprintRepository) {
-        this.sprintRepository = sprintRepository;
-        this.taskBoardRepository = taskBoardRepository;
+    private final SprintSubService sprintSubService;
+    private final TaskSubService taskSubService;
+
+    SprintBoardService(SprintSubService sprintSubService, TaskSubService taskBoardService) {
+        this.sprintSubService = sprintSubService;
+        this.taskSubService = taskBoardService;
     }
 
-    private LocalDateTime getTimeExpired(Integer interval) {
-        return LocalDateTime.now().plusDays(interval);
-    }
 
-    private boolean hasTimeExpired(LocalDateTime dateTime) {
-        return dateTime.isBefore(LocalDateTime.now());
-    }
-
+    @SneakyThrows
+    @Transactional
     public SprintDTO create(@NonNull SprintDTO sprintDTO, long idProject) {
-        if (sprintDTO.getDaysInterval() <= 0) {
-            throw new NotSavedResource("day <= 0", new Throwable());
-        }
-        SprintDb sprintDb = new SprintDb(getTimeExpired(sprintDTO.getDaysInterval()),
-                sprintDTO.getDaysInterval(), idProject, StatusObj.TO_DO, sprintDTO.getPriority(), sprintDTO.getPurpose());
-        return Mapping.toSprintDTO(sprintRepository.save(sprintDb));
+        return Mapping.toSprintDTO(sprintSubService.create(sprintDTO, idProject));
     }
 
     public List<SprintDTO> getAll(long idProject) {
-        return sprintRepository.findSprintDbByIdProject(idProject).stream().map(s -> {
-            SprintDTO sprintDTO = Mapping.toSprintDTO(s);
-            List<TaskDb> taskDbs=taskBoardRepository.getAllBySprintDb(s);
-            boolean isCompleted = !taskDbs.isEmpty()&&taskDbs.stream().allMatch(taskDb -> taskDb.getStatus() == StatusObj.COMPLETE);
-            if (isCompleted) {
-                sprintDTO.setStatus(StatusObj.COMPLETE);
-            }
-            if (hasTimeExpired(s.getTimeExpired())) {
-                sprintDTO.setStatus(StatusObj.EXPIRED);
-            }
-            return sprintDTO;
-        }).toList();
+        return sprintSubService.getAll(idProject, s -> taskSubService.getTasksOnSprint(s.getId()).toList()).map(
+                Mapping::toSprintDTO
+        ).toList();
+
     }
 
     @Transactional
+    @SneakyThrows
     public void delete(long idSprint) {
-        SprintDb sprintDb = new SprintDb();
-        sprintDb.setId(idSprint);
-        if (!sprintRepository.existsById(idSprint)) {
-            throw new NoSuchElementException("Sprint not found");
-        }
-        sprintRepository.delete(sprintDb);
+        sprintSubService.delete(idSprint);
     }
 }

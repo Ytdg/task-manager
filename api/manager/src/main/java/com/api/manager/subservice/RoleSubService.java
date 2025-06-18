@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 
 /**
  * SubService-class
- * getAllByRole - получить проекты по ролям
  */
 @Component
 public class RoleSubService {

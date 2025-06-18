@@ -36,7 +36,7 @@ public class SprintBoardTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final String basePath = "/sprint_board/217/";
+    private final String basePath = "/sprint_board/231/";
 
     private SprintDTO validCreate() {
         SprintDTO sprintDTO = new SprintDTO();
@@ -85,9 +85,9 @@ public class SprintBoardTest {
     @SneakyThrows
     @WithUserDetails("test3422")
     void getAll() {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/sprint_board/217/" + "get_all")).andExpect(status().isOk()).andDo(print()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/sprint_board/231/" + "get_all")).andExpect(status().isOk()).andDo(print()).andReturn();
         String jsonResponse = mvcResult.getResponse().getContentAsString();
-        List<SprintDb> list = Arrays.asList(objectMapper.readValue(jsonResponse, SprintDb[].class));
+        List<SprintDTO> list = Arrays.asList(objectMapper.readValue(jsonResponse, SprintDTO[].class));
         Assertions.assertDoesNotThrow(()->{
             list.stream().filter(s->s.getStatus()==StatusObj.COMPLETE).findFirst().orElseThrow();
         },"Not COMPLETED");
@@ -105,7 +105,7 @@ public class SprintBoardTest {
     @SneakyThrows
     @WithUserDetails("test3422")
     void delete() {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/sprint_board/217/delete?id=312")).andExpect(status().isOk()).andDo(print());
+        mockMvc.perform(MockMvcRequestBuilders.delete("/sprint_board/231/delete?id=864")).andExpect(status().isOk()).andDo(print());
     }
 
     @Test
