@@ -5,3 +5,5 @@
 !! После каждого клона репозитория: сделай так - docker-compose down, затем удали все Volume, docker-compose up --build -d
 запускает скрипт также для бд
 без этого бд не обновиться
+
+DEPRECATED
