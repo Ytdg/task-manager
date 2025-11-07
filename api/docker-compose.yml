@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   app:
     image: 'loxx'
@@ -9,37 +7,23 @@ services:
     ports:
       - "8080:8081"
     depends_on:
-      - db
+      - dbscrum
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/manage-database
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbscrum:5432/manage-database
       - SERVER_PORT=8081
 
-  db:
+  dbscrum:
     image: 'postgres:17'
-    container_name: db
+    container_name: dbscrum
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=postgres  # Замените
-      - POSTGRES_PASSWORD=12345678 # Замените
-      - POSTGRES_DB=manage-database  # Заменит
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=12345678
+      - POSTGRES_DB=manage-database
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Сохраняем оригинальное имя
-
-
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
-
   postgres_data:
-
-
-
-
-
-
-
-
-
-
-
